@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.pyc
+
+# Django
+*.env
+db.sqlite3
+/staticfiles/
+/media/
+/*.pem
+
+# VS Code (якщо ви використовуєте його)
+.vscode/
+
+# macOS
+.DS_Store
+
+# Virtualenv
+venv/
+.env/
