@@ -16,7 +16,7 @@ __pycache__/
 
 *.env
 .env.*
-config/
+
 
 
 dist/
