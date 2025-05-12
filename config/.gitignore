@@ -1,24 +1,38 @@
-# Python
+node_modules/
+venv/
+.env
+
+
 __pycache__/
 *.py[cod]
+
+
 *.sqlite3
+
+
 *.log
-*.pot
-*.pyc
+*.tmp
 
-# Django
+
 *.env
-db.sqlite3
-/staticfiles/
-/media/
-/*.pem
+.env.*
+config/
 
-# VS Code (якщо ви використовуєте його)
-.vscode/
 
-# macOS
+dist/
+build/
+*.tsbuildinfo
+
+
 .DS_Store
+.vscode/
+.idea/
+*.swp
 
-# Virtualenv
-venv/
-.env/
+
+staticfiles/
+media/
+
+
+Thumbs.db
+ehthumbs.db
