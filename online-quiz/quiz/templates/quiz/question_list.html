@@ -7,11 +7,14 @@
     <h1>Питання</h1>
     <ul>
     {% for question in questions %}
-        <li><a href="{% url 'question_detail' question.pk %}">{{ question.text }}</a></li>
+        {% if question.pk %}
+            <li><a href="{% url 'question_detail' question.pk %}">{{ question.text }}</a></li>
+        {% else %}
+            <li>Помилка: відсутній ідентифікатор питання</li>
+        {% endif %}
     {% empty %}
         <li>Немає питань</li>
     {% endfor %}
     </ul>
-    <a href="{% url 'question_list' %}">Повернутися до списку питань</a>
 </body>
 </html>
