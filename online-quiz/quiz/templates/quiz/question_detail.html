@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ question.text }}</title>
+</head>
+<body>
+    <h1>{{ question.text }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for answer in question.answer_set.all %}
+            <div>
+                <input type="radio" id="answer{{ forloop.counter }}" name="answer" value="{{ answer.id }}">
+                <label for="answer{{ forloop.counter }}">{{ answer.text }}</label>
+            </div>
+        {% empty %}
+            <p>Варіанти відповідей відсутні.</p>
+        {% endfor %}
+        <button type="submit">Відповісти</button>
+    </form>
+
+    {% if result != None %}
+        {% if result %}
+            <p>Правильно!</p>
+        {% else %}
+            <p>Неправильно.</p>
+        {% endif %}
+    {% endif %}
+
+    <a href="{% url 'question_list' %}">Повернутися до списку питань</a>
+</body>
+</html>
