@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Головна</title>
+</head>
+<body>
+    <h1>Ласкаво просимо на сайт вікторини!</h1>
+
+    {% if user.is_authenticated %}
+        <p>Привіт, {{ user.username }}!</p>
+        <a href="{% url 'question_list' %}">Перейти до вікторини</a>
+        <br>
+        <form method="post" action="{% url 'logout' %}"><button type="submit">Вийти{% csrf_token %}</button></form>
+    {% else %}
+        <p>Ви не увійшли.</p>
+        <a href="{% url 'signup' %}">Зареєструватися</a><br>
+        <a href="{% url 'login' %}">Увійти</a>
+    {% endif %}
+</body>
+</html>

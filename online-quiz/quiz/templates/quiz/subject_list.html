@@ -1,0 +1,6 @@
+<h1>Оберіть предмет</h1>
+<ul>
+  {% for subject in subjects %}
+    <li><a href="{% url 'subject_detail' subject.pk %}">{{ subject.name }}</a></li>
+  {% endfor %}
+</ul>

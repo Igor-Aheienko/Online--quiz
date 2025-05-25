@@ -1,0 +1,6 @@
+<h2>Питання з предмета: {{ subject.name }}</h2>
+<ul>
+  {% for question in questions %}
+    <li><a href="{% url 'question_detail' question.pk %}">{{ question.text }}</a></li>
+  {% endfor %}
+</ul>
