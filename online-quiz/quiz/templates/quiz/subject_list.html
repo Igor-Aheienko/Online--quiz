@@ -1,6 +1,18 @@
-<h1>Оберіть предмет</h1>
-<ul>
-  {% for subject in subjects %}
-    <li><a href="{% url 'subject_detail' subject.pk %}">{{ subject.name }}</a></li>
-  {% endfor %}
-</ul>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список предметів</title>
+</head>
+<body>
+    <h1>Оберіть предмет</h1>
+    <ul>
+        {% for subject in subjects %}
+          <li>
+            {{ subject.name }} —
+            <a href="{% url 'start_quiz' subject.id %}">Почати тест</a>
+          </li>
+        {% endfor %}
+      </ul>
+    <a href="{% url 'home' %}">На головну</a>
+</body>
+</html>

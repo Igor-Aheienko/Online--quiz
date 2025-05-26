@@ -1,0 +1,13 @@
+<h2>Питання {{ question_index }} із {{ total }}</h2>
+<p>{{ question.text }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  {% for answer in answers %}
+    <label>
+      <input type="radio" name="answer" value="{{ answer.id }}" required>
+      {{ answer.text }}
+    </label><br>
+  {% endfor %}
+  <button type="submit">Відповісти</button>
+</form>

@@ -4,11 +4,11 @@
     <title>Головна</title>
 </head>
 <body>
-    <h1>Ласкаво просимо на сайт вікторини!</h1>
+    <h1>Обирай предмет, проходь тести та перевіряй свої знання!</h1>
 
     {% if user.is_authenticated %}
         <p>Привіт, {{ user.username }}!</p>
-        <a href="{% url 'question_list' %}">Перейти до вікторини</a>
+        <a href="{% url 'subject_list' %}">До предметів</a>
         <br>
         <form method="post" action="{% url 'logout' %}"><button type="submit">Вийти{% csrf_token %}</button></form>
     {% else %}

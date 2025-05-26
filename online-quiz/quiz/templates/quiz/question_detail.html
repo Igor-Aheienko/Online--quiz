@@ -8,7 +8,7 @@
 
     <form method="post">
         {% csrf_token %}
-        {% for answer in question.answer_set.all %}
+        {% for answer in question.answers.all %}
             <div>
                 <input type="radio" id="answer{{ forloop.counter }}" name="answer" value="{{ answer.id }}">
                 <label for="answer{{ forloop.counter }}">{{ answer.text }}</label>
