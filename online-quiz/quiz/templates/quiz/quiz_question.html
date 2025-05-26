@@ -4,15 +4,19 @@
 <form method="post">
   {% csrf_token %}
   {% for answer in answers %}
-    <label>
-      <input type="radio" name="answer" value="{{ answer.id }}" required>
-      {{ answer.text }}
-    </label><br>
+      <label>
+          <input type="radio" name="answer" value="{{ answer.id }}">
+          {{ answer.text }}
+      </label><br>
   {% endfor %}
+
   <button type="submit">Відповісти</button>
+  <button type="submit" name="skip" value="1"
+          onclick="return confirm('Пропустити це питання? Ви зможете повернутись до нього пізніше.')">
+      Пропустити
+  </button>
 </form>
 
-<h1>Питання {{ question_index }} із {{ total }}</h1>
 
 <h2>Залишилось часу: <span id="timer">10:00</span></h2>
 
@@ -45,3 +49,10 @@
         startTimer(duration);
     };
 </script>
+
+<form action="{% url 'end_quiz_early' subject_id %}" method="post" style="margin-top: 20px;">
+  {% csrf_token %}
+  <button type="submit" onclick="return confirm('Тест буде завершено. Ви отримаєте бали за вже пройдені питання. Продовжити?');">
+      Завершити тест
+  </button>
+</form>

@@ -2,8 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Question, Answer, Subject
 from django.contrib.auth import login
 from .forms import SignUpForm
+from django.views.decorators.csrf import csrf_exempt
 import random
 
+@csrf_exempt
+def end_quiz_early(request, subject_id):
+    return redirect('quiz_result', subject_id=subject_id)
 
 def home(request):
     return render(request, 'quiz/home.html')
@@ -61,29 +65,48 @@ def signup(request):
 
 def start_quiz(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
-    request.session['score'] = 0
+    
     question_ids = list(Question.objects.filter(subject=subject).values_list('id', flat=True))
-    random.shuffle(question_ids)  
+
+    import random
+    random.shuffle(question_ids)
+
+    request.session['score'] = 0
     request.session['question_order'] = question_ids
     request.session['question_index'] = 0
+    request.session['skipped_questions'] = []
+
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
 
 
 def quiz_question(request, subject_id, question_index):
     question_ids = request.session.get('question_order', [])
+    skipped = request.session.get('skipped_questions', [])
+
     if question_index >= len(question_ids):
-        return redirect('quiz_result', subject_id=subject_id)
+        if skipped:
+            request.session['question_order'] = skipped
+            request.session['skipped_questions'] = []
+            request.session['question_index'] = 0
+            return redirect('quiz_question', subject_id=subject_id, question_index=0)
+        else:
+            return redirect('quiz_result', subject_id=subject_id)
 
     question = get_object_or_404(Question, id=question_ids[question_index])
     answers = question.answers.all()
 
     if request.method == 'POST':
-        selected_answer_id = request.POST.get('answer')
-        if selected_answer_id:
-            selected_answer = get_object_or_404(Answer, id=int(selected_answer_id))
+        if 'skip' in request.POST:
+            skipped.append(question.id)
+            request.session['skipped_questions'] = skipped
+        else:
+            selected_answer_id = int(request.POST.get('answer'))
+            selected_answer = get_object_or_404(Answer, id=selected_answer_id)
+
             if selected_answer.is_correct:
                 request.session['score'] += 1
-            return redirect('quiz_question', subject_id=subject_id, question_index=question_index + 1)
+
+        return redirect('quiz_question', subject_id=subject_id, question_index=question_index + 1)
 
     return render(request, 'quiz/quiz_question.html', {
         'question': question,
@@ -95,7 +118,12 @@ def quiz_question(request, subject_id, question_index):
 
 
 def quiz_result(request, subject_id):
-    total = len(request.session.get('question_order', []))
+    question_order = request.session.get('question_order', [])
+    skipped_questions = request.session.get('skipped_questions', [])
+
+    # Унікальні питання — і ті, що були одразу, і ті, що пропустили
+    all_question_ids = list(set(question_order + skipped_questions))
+    total = len(all_question_ids)
 
     if request.user.is_authenticated:
         score = request.session.get('score', 0)
