@@ -1,11 +1,15 @@
-<h2>Результат</h2>
 {% if show_result %}
-    <p>Ви набрали {{ score }} з {{ total }} балів.</p>
+    <p>Пропущено питань: {{ skipped }} з {{ total }}</p>
+    <p>Правильних відповідей: {{ score }} з {{ total }}</p>
+    <a href="{% url 'review_answers' subject_id %}">Переглянути правильні відповіді</a>
 {% else %}
-    <p>Щоб побачити результат, будь ласка <a href="{% url 'login' %}">увійдіть</a> або <a href="{% url 'signup' %}">зареєструйтесь</a>.</p>
+    <p>Щоб побачити результати — увійдіть або зареєструйтесь</p>
 {% endif %}
 
-<p>Правильних відповідей: {{ score }} із {{ total }}</p>
+{% if duration %}
+    <p>Час проходження: {{ duration }} секунд</p>
+{% endif %}
+
 <p>
     <a href="{% url 'start_quiz' subject_id %}">Пройти ще раз</a>
   </p>

@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from .forms import SignUpForm
 from django.views.decorators.csrf import csrf_exempt
 import random
+import time
 
 @csrf_exempt
 def end_quiz_early(request, subject_id):
@@ -73,8 +74,12 @@ def start_quiz(request, subject_id):
 
     request.session['score'] = 0
     request.session['question_order'] = question_ids
+    request.session['all_questions_total'] = len(question_ids)
     request.session['question_index'] = 0
     request.session['skipped_questions'] = []
+    request.session['initial_question_order'] = question_ids
+    request.session['start_time'] = time.time()
+    
 
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
 
@@ -119,23 +124,49 @@ def quiz_question(request, subject_id, question_index):
 
 def quiz_result(request, subject_id):
     question_order = request.session.get('question_order', [])
-    skipped_questions = request.session.get('skipped_questions', [])
+    skipped_question_ids = request.session.get('skipped_questions', [])
 
-    # Унікальні питання — і ті, що були одразу, і ті, що пропустили
-    all_question_ids = list(set(question_order + skipped_questions))
+    all_question_ids = list(set(question_order + skipped_question_ids))
     total = len(all_question_ids)
 
-    if request.user.is_authenticated:
-        score = request.session.get('score', 0)
-        return render(request, 'quiz/quiz_result.html', {
-            'score': score,
-            'total': total,
-            'show_result': True,
-            'subject_id': subject_id
-        })
+    skipped_questions = Question.objects.filter(id__in=skipped_question_ids)
+
+    
+    start_time = request.session.get('start_time')
+    if start_time:
+        duration = int(time.time() - start_time)
     else:
-        return render(request, 'quiz/quiz_result.html', {
-            'show_result': False,
-            'total': total,
-            'subject_id': subject_id
+        duration = None
+
+    context = {
+        'total': total,
+        'skipped': len(skipped_question_ids),
+        'skipped_questions': skipped_questions,
+        'subject_id': subject_id,
+        'duration': duration,  # додали час у контекст
+    }
+
+    if request.user.is_authenticated:
+        context['score'] = request.session.get('score', 0)
+        context['show_result'] = True
+    else:
+        context['show_result'] = False
+
+    return render(request, 'quiz/quiz_result.html', context)
+
+
+def review_answers(request, subject_id):
+    question_ids = request.session.get('initial_question_order', [])
+    questions = Question.objects.filter(id__in=question_ids)
+
+    data = []
+    for question in questions:
+        correct = question.answers.filter(is_correct=True)
+        data.append({
+            'question': question,
+            'correct_answers': correct
         })
+
+    return render(request, 'quiz/review_answers.html', {
+        'questions_data': data
+    })
