@@ -14,7 +14,8 @@
     {% else %}
         <p>Ви не увійшли.</p>
         <a href="{% url 'signup' %}">Зареєструватися</a><br>
-        <a href="{% url 'login' %}">Увійти</a>
+        <a href="{% url 'login' %}">Увійти</a><br>
+        <a href="{% url 'subject_list' %}">Пройти тестування</a><br>
     {% endif %}
 </body>
 </html>

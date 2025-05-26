@@ -1,3 +1,14 @@
 <h2>Результат</h2>
+{% if show_result %}
+    <p>Ви набрали {{ score }} з {{ total }} балів.</p>
+{% else %}
+    <p>Щоб побачити результат, будь ласка <a href="{% url 'login' %}">увійдіть</a> або <a href="{% url 'signup' %}">зареєструйтесь</a>.</p>
+{% endif %}
+
 <p>Правильних відповідей: {{ score }} із {{ total }}</p>
-<a href="{% url 'subject_list' %}">До списку предметів</a>
+<p>
+    <a href="{% url 'start_quiz' subject_id %}">Пройти ще раз</a>
+  </p>
+  <p>
+    <a href="{% url 'subject_list' %}">До списку предметів</a>
+  </p>

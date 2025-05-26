@@ -63,7 +63,7 @@ def start_quiz(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
     request.session['score'] = 0
     question_ids = list(Question.objects.filter(subject=subject).values_list('id', flat=True))
-    random.shuffle(question_ids)  # перемішуємо питання
+    random.shuffle(question_ids)  
     request.session['question_order'] = question_ids
     request.session['question_index'] = 0
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
@@ -95,9 +95,19 @@ def quiz_question(request, subject_id, question_index):
 
 
 def quiz_result(request, subject_id):
-    score = request.session.get('score', 0)
     total = len(request.session.get('question_order', []))
-    return render(request, 'quiz/quiz_result.html', {
-        'score': score,
-        'total': total
-    })
+
+    if request.user.is_authenticated:
+        score = request.session.get('score', 0)
+        return render(request, 'quiz/quiz_result.html', {
+            'score': score,
+            'total': total,
+            'show_result': True,
+            'subject_id': subject_id
+        })
+    else:
+        return render(request, 'quiz/quiz_result.html', {
+            'show_result': False,
+            'total': total,
+            'subject_id': subject_id
+        })
