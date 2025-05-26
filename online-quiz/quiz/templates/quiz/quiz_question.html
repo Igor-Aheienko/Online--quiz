@@ -11,3 +11,37 @@
   {% endfor %}
   <button type="submit">Відповісти</button>
 </form>
+
+<h1>Питання {{ question_index }} із {{ total }}</h1>
+
+<h2>Залишилось часу: <span id="timer">10:00</span></h2>
+
+<script>
+    let duration = 10 * 60; 
+    let display = document.getElementById('timer');
+
+    function startTimer(seconds) {
+        let timer = seconds;
+        let minutes, secs;
+
+        let countdown = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            secs = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            secs = secs < 10 ? "0" + secs : secs;
+
+            display.textContent = minutes + ":" + secs;
+
+            if (--timer < 0) {
+                clearInterval(countdown);
+                alert("Час вичерпано!");
+                window.location.href = "{% url 'quiz_result' subject_id %}";
+            }
+        }, 1000);
+    }
+
+    window.onload = function () {
+        startTimer(duration);
+    };
+</script>

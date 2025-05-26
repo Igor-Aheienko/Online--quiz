@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Question, Answer, Subject
 from django.contrib.auth import login
 from .forms import SignUpForm
+import random
 
 
 def home(request):
@@ -61,9 +62,9 @@ def signup(request):
 def start_quiz(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
     request.session['score'] = 0
-    request.session['question_order'] = list(
-        Question.objects.filter(subject=subject).values_list('id', flat=True)
-    )
+    question_ids = list(Question.objects.filter(subject=subject).values_list('id', flat=True))
+    random.shuffle(question_ids)  # перемішуємо питання
+    request.session['question_order'] = question_ids
     request.session['question_index'] = 0
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
 
@@ -89,6 +90,7 @@ def quiz_question(request, subject_id, question_index):
         'answers': answers,
         'question_index': question_index + 1,
         'total': len(question_ids),
+        'subject_id': subject_id,
     })
 
 
