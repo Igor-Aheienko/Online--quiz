@@ -7,13 +7,14 @@
     <h1>Обирай предмет, проходь тести та перевіряй свої знання!</h1>
 
     {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}">Профіль</a>
         <p>Привіт, {{ user.username }}!</p>
         <a href="{% url 'subject_list' %}">До предметів</a>
         <br>
         <form method="post" action="{% url 'logout' %}"><button type="submit">Вийти{% csrf_token %}</button></form>
     {% else %}
         <p>Ви не увійшли.</p>
-        <a href="{% url 'signup' %}">Зареєструватися</a><br>
+        <a href="{% url 'singup' %}">Зареєструватися</a><br>
         <a href="{% url 'login' %}">Увійти</a><br>
         <a href="{% url 'subject_list' %}">Пройти тестування</a><br>
     {% endif %}

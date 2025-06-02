@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Профіль</title>
+</head>
+<body>
+    <h1>Профіль користувача {{ request.user.username }}</h1>
+
+    <p>Пройдено тестів: {{ profile.tests_taken }}</p>
+    <p>Загальна кількість балів: {{ profile.total_score }}</p>
+    <p>Середній бал: {{ average_score }}</p>
+
+    <a href="{% url 'home' %}">На головну</a>
+</body>
+</html>

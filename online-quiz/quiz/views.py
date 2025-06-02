@@ -3,6 +3,7 @@ from .models import Question, Answer, Subject
 from django.contrib.auth import login
 from .forms import SignUpForm
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 import random
 import time
 
@@ -52,7 +53,7 @@ def question_detail(request, pk):
     return render(request, 'quiz/question_detail.html', {'question': question, 'result': result})
 
 
-def signup(request):
+def singup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -61,7 +62,17 @@ def signup(request):
             return redirect('question_list')
     else:
         form = SignUpForm()
-    return render(request, 'quiz/signup.html', {'form': form})
+    return render(request, 'quiz/singup.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    profile = request.user.userprofile
+    average_score = round(profile.total_score / profile.tests_taken, 2) if profile.tests_taken > 0 else 0
+
+    return render(request, 'quiz/profile.html', {
+        'profile': profile,
+        'average_score': average_score,
+    })
 
 
 def start_quiz(request, subject_id):
@@ -79,6 +90,7 @@ def start_quiz(request, subject_id):
     request.session['skipped_questions'] = []
     request.session['initial_question_order'] = question_ids
     request.session['start_time'] = time.time()
+    request.session.pop('result_saved', None)
     
 
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
@@ -143,14 +155,28 @@ def quiz_result(request, subject_id):
         'skipped': len(skipped_question_ids),
         'skipped_questions': skipped_questions,
         'subject_id': subject_id,
-        'duration': duration,  # додали час у контекст
+        'duration': duration,  
     }
 
     if request.user.is_authenticated:
-        context['score'] = request.session.get('score', 0)
+        score = request.session.get('score', 0)
+        context['score'] = score
         context['show_result'] = True
-    else:
-        context['show_result'] = False
+        context['duration'] = duration
+
+        profile = request.user.userprofile
+        profile.tests_taken += 1
+        profile.total_score += context['score']
+        profile.save()
+    
+    if request.user.is_authenticated:
+        if not request.session.get('result_saved'):
+            profile = request.user.userprofile
+            profile.tests_taken += 1
+            profile.total_score += score
+            profile.save()
+
+        request.session['result_saved'] = True
 
     return render(request, 'quiz/quiz_result.html', context)
 
