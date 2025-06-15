@@ -60,8 +60,8 @@ button:hover, .btn:hover {
 
 .fancy-button:hover {
     background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
 
 
@@ -101,3 +101,15 @@ button:hover, .btn:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     text-decoration: none;
 }   
+
+
+.profile-box {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 400px;
+    margin: 0 auto 30px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: left;
+    font-size: 18px;
+}

@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Список предметів</title>
-</head>
-<body>
-    <h1>Оберіть предмет</h1>
-    <ul>
+{% extends 'quiz/base.html' %}
+{% load static %}
+
+{% block title %}Список предметів{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h2 class="home-title">Оберіть предмет для проходження тесту:</h2>
+
+    <div class="button-grid">
         {% for subject in subjects %}
-          <li>
-            {{ subject.name }} —
-            <a href="{% url 'start_quiz' subject.id %}">Почати тест</a>
-          </li>
+            <a class="btn" href="{% url 'start_quiz' subject.id %}">{{ subject.name }}</a>
+        {% empty %}
+            <p>Немає доступних предметів.</p>
         {% endfor %}
-      </ul>
-    <a href="{% url 'home' %}">На головну</a>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

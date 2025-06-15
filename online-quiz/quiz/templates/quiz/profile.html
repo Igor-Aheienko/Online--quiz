@@ -1,15 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Профіль</title>
-</head>
-<body>
-    <h1>Профіль користувача {{ request.user.username }}</h1>
+{% extends 'quiz/base.html' %}
+{% load static %}
 
-    <p>Пройдено тестів: {{ profile.tests_taken }}</p>
-    <p>Загальна кількість балів: {{ profile.total_score }}</p>
-    <p>Середній бал: {{ average_score }}</p>
+{% block title %}Профіль{% endblock %}
 
-    <a href="{% url 'home' %}">На головну</a>
-</body>
-</html>
+{% block content %}
+<div class="home-container">
+    <h2 class="home-title">Профіль користувача</h2>
+
+    <div class="profile-box">
+        <p><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+        <p><strong>Кількість пройдених тестів:</strong> {{ profile.tests_taken }}</p>
+        <p><strong>Загальний бал:</strong> {{ profile.total_score }}</p>
+    </div>
+
+    <div class="button-grid">
+        <a class="btn" href="{% url 'home' %}">На головну</a>
+    </div>
+</div>
+{% endblock %}
