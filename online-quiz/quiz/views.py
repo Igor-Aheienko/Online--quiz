@@ -100,7 +100,6 @@ def quiz_question(request, subject_id, question_index):
     question_ids = request.session.get('question_order', [])
     skipped = request.session.get('skipped_questions', [])
 
-    # Коли питання закінчились
     if question_index >= len(question_ids):
         if skipped:
             request.session['question_order'] = skipped
@@ -114,22 +113,27 @@ def quiz_question(request, subject_id, question_index):
     answers = question.answers.all()
 
     if request.method == 'POST':
-        # ✅ Якщо користувач натиснув "Завершити тест"
+        # Ініціалізація score, якщо немає
+        if 'score' not in request.session:
+            request.session['score'] = 0
+
         if 'end' in request.POST:
             return redirect('quiz_result', subject_id=subject_id)
 
-        # ✅ Якщо натиснув "Пропустити"
         elif 'skip' in request.POST:
-            skipped.append(question.id)
-            request.session['skipped_questions'] = skipped
+            if question.id not in skipped:
+                skipped.append(question.id)
+                request.session['skipped_questions'] = skipped
 
-        # ✅ Якщо вибрав відповідь
         elif 'answer' in request.POST:
-            selected_answer_id = int(request.POST.get('answer'))
-            selected_answer = get_object_or_404(Answer, id=selected_answer_id)
-
-            if selected_answer.is_correct:
-                request.session['score'] += 1
+            selected_answer_id = request.POST.get('answer')
+            if selected_answer_id:
+                try:
+                    selected_answer = get_object_or_404(Answer, id=int(selected_answer_id))
+                    if selected_answer.is_correct:
+                        request.session['score'] += 1
+                except ValueError:
+                    pass  # Некоректний id відповіді, можна ігнорувати
 
         return redirect('quiz_question', subject_id=subject_id, question_index=question_index + 1)
 

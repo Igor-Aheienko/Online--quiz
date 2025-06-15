@@ -4,23 +4,42 @@
 {% block title %}Головна{% endblock %}
 
 {% block content %}
-<div class="home-container">
-    <h2 class="home-title">Обирай предмет, проходь тести та перевіряй свої знання!</h2>
+<style>
+    .top-right-profile {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+    }
+</style>
 
-    <div class="button-grid">
-        {% if user.is_authenticated %}
-            <p>Привіт, {{ user.username }}!</p>
-            <a href="{% url 'profile' %}" class="btn">👤 Профіль</a>
-            <a href="{% url 'subject_list' %}" class="btn">📚 До предметів</a>
-            <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="home-button">🚪 Вийти</button>
-            </form>
-        {% else %}
+<div class="home-container">
+
+    {% if user.is_authenticated %}
+        <!-- Профіль вгорі праворуч -->
+        <div class="top-right-profile">
+            <a href="{% url 'profile' %}" class="profile-button">👤 {{ user.username }}</a>
+        </div>
+
+        <h2 class="home-title">Обирай предмет, проходь тести та перевіряй свої знання!</h2>
+
+        <div class="button-grid">
+            <a href="{% url 'subject_list' %}" class="home-button">📚 До предметів</a>
+        </div>
+
+        <form method="post" action="{% url 'logout' %}" style="margin-top: 20px;">
+            {% csrf_token %}
+            <button type="submit" class="home-button">🚪 Вийти</button>
+        </form>
+
+    {% else %}
+        <h2 class="home-title">Ласкаво просимо! Увійдіть або зареєструйтесь</h2>
+
+        <div class="button-grid">
             <a href="{% url 'singup' %}" class="home-button">📝 Зареєструватися</a>
             <a href="{% url 'login' %}" class="home-button">🔑 Увійти</a>
             <a href="{% url 'subject_list' %}" class="home-button">🧠 Пройти тестування</a>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
+
 </div>
 {% endblock %}

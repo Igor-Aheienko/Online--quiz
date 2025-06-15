@@ -22,19 +22,34 @@ a:hover {
     text-decoration: underline;
 }
 
-button, .btn {
-    background: #007bff;
+/* Кнопки з плавною анімацією підстрибування та зняттям виділення */
+button, .btn, .home-button, .fancy-button {
+    background-color: #007bff;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    user-select: none;
+    outline: none;
+    text-decoration: none;
+    transform: translateY(0);
 }
 
-button:hover, .btn:hover {
-    background: #0056b3;
+button:hover, .btn:hover, .home-button:hover, .fancy-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-5px);
     text-decoration: none;
+}
+
+button:focus, .btn:focus, .home-button:focus, .fancy-button:focus {
+    outline: none;
+}
+
+button:active, .btn:active, .home-button:active, .fancy-button:active {
+    transform: translateY(-2px);
+    transition-duration: 0.1s;
 }
 
 
@@ -47,20 +62,14 @@ button:hover, .btn:hover {
 }
 
 .fancy-button {
-    background-color: #007bff;
-    color: white;
     padding: 12px 24px;
     border-radius: 10px;
-    text-decoration: none;
     font-size: 16px;
     font-weight: bold;
-    transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .fancy-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-5px);
     box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
 
@@ -91,16 +100,13 @@ button:hover, .btn:hover {
     font-size: 18px;
     border-radius: 12px;
     color: white;
-    text-decoration: none;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 .home-button:hover {
-    transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    text-decoration: none;
-}   
+}
 
 
 .profile-box {
@@ -114,6 +120,25 @@ button:hover, .btn:hover {
     font-size: 18px;
 }
 
+
+.profile-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.profile-button:hover {
+    transform: translateY(3px); /* підпригування вниз */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+}
 
 .question-box {
     background-color: #fefefe;
@@ -139,42 +164,37 @@ button:hover, .btn:hover {
     margin-right: 10px;
 }
 
-.button-grid {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
-.btn {
-    padding: 10px 18px;
-    background-color: #4CAF50;
+button, .btn, .home-button, .fancy-button {
+    background-color: #007bff;
     color: white;
+    padding: 10px 20px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    user-select: none;
+    outline: none;
     text-decoration: none;
-    transition: background-color 0.2s;
+    transform: translateY(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    /* fix for iOS Safari lag */
+    -webkit-font-smoothing: antialiased;
 }
 
-.btn:hover {
-    background-color: #45a049;
+button:hover, .btn:hover, .home-button:hover, .fancy-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-5px);
+    text-decoration: none;
 }
 
-.btn-skip {
-    background-color: #ffc107;
+button:focus, .btn:focus, .home-button:focus, .fancy-button:focus {
+    outline: none;
 }
 
-.btn-skip:hover {
-    background-color: #e0a800;
-}
-
-.btn-danger {
-    background-color: #dc3545;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
+button:active, .btn:active, .home-button:active, .fancy-button:active {
+    transform: translateY(-2px);
+    transition-duration: 0.1s;
 }
 
 .modal {
