@@ -13,6 +13,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        position: relative; /* для контексту позиціювання */
     }
 
     .subject-title {
@@ -57,17 +58,46 @@
         color: #777;
         margin-top: 20px;
     }
+
+    /* Кнопка "На головну" у верхньому лівому куті */
+    .back-home-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+        padding: 12px 24px;
+        border-radius: 12px;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 6px 12px rgba(47, 128, 237, 0.7);
+        cursor: pointer;
+        user-select: none;
+        font-size: 18px;
+        z-index: 1000; /* щоб була поверх */
+    }
+
+    .back-home-btn:hover {
+        background: linear-gradient(135deg, #9face6 0%, #74ebd5 100%);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(47, 128, 237, 0.9);
+        text-decoration: none;
+    }
 </style>
 
 <div class="subject-page">
+    <a href="{% url 'home' %}" class="back-home-btn">⬅🏠 На головну</a>
     <h2 class="subject-title">Оберіть предмет для проходження тесту:</h2>
 
     <div class="subject-grid">
-        {% for subject in subjects %}
-            <a class="subject-button" href="{% url 'start_quiz' subject.id %}">{{ subject.name }}</a>
-        {% empty %}
+        {% if subjects %}
+            {% for subject in subjects %}
+                <a class="subject-button" href="{% url 'start_quiz' subject.id %}">{{ subject.name }}</a>
+            {% endfor %}
+        {% else %}
             <p class="no-subjects">Немає доступних предметів.</p>
-        {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

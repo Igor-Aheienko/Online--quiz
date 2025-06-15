@@ -4,6 +4,9 @@ body {
     padding: 0;
     background: #f8f9fa;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header, footer {
@@ -11,6 +14,25 @@ header, footer {
     color: #fff;
     padding: 1em;
     text-align: center;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+}
+
+footer {
+    background: #f0f0f0;
+    padding: 10px 0;
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 a {
@@ -52,7 +74,6 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
     transition-duration: 0.1s;
 }
 
-
 .button-group {
     margin-top: 20px;
     display: flex;
@@ -70,9 +91,8 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
 }
 
 .fancy-button:hover {
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
-
 
 .home-container {
     text-align: center;
@@ -108,14 +128,13 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-
 .profile-box {
     background-color: #f9f9f9;
     padding: 25px;
     border-radius: 12px;
     max-width: 400px;
     margin: 0 auto 30px auto;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
     font-size: 18px;
 }
@@ -134,10 +153,11 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
 }
 
 .profile-button:hover {
-    transform: translateY(4px); /* Підпригування вниз */
+    transform: translateY(4px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     text-decoration: none;
 }
+
 .question-box {
     background-color: #fefefe;
     border: 2px solid #ddd;
@@ -161,7 +181,6 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
 .choice input[type="radio"] {
     margin-right: 10px;
 }
-
 
 .modal {
     display: none;
@@ -189,34 +208,174 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
     margin-top: 20px;
 }
 
-
-
-  html, body {
-    height: 100%;
-    margin: 0; padding: 0;
-  }
-
-  body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  main {
-    flex: 1;
-    padding: 20px;
-  }
-
-  footer {
-    background: #f0f0f0;
-    padding: 10px 0;
-    text-align: center;
-    color: #555;
-    font-size: 14px;
-  }
-
-  .-question-container {
-    padding-bottom: 80px; /* простір під футером */
-    min-height: calc(100vh - 100px); /* мінімальна висота, щоб футер був внизу */
+.-question-container {
+    padding-bottom: 80px;
+    min-height: calc(100vh - 100px);
     box-sizing: border-box;
+}
+
+/* Анімоване попередження про вибір відповіді */
+#answerWarning {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#answerWarning.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#warningModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: #fff;
+    padding: 28px 32px;
+    border-radius: 14px;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 7px 24px rgba(0,0,0,0.22);
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .modal-icon {
+    font-size: 48px;
+    color: #f39c12;
+    margin-bottom: 18px;
+  }
+  
+  .modal-buttons {
+    margin-top: 20px;
+  }
+  
+  .modal-buttons button {
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    margin: 0 8px;
+  }
+  
+  #modalConfirm {
+    background: #28a745;
+    color: white;
+  }
+  
+  #modalConfirm:hover {
+    background: #218838;
+  }
+  
+  #modalCancel {
+    background: #6c757d;
+    color: white;
+  }
+  
+  #modalCancel:hover {
+    background: #5a6268;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    margin-right: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+  }
+  
+  
+  label {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    background-color: #fff;
+    display: inline-block;
+    position: relative;
+    margin-right: 12px;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+  
+  input[type="radio"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.3s ease;
+    z-index: 1;
+  }
+  
+ 
+  input[type="radio"]:checked::before {
+    transform: scale(1);
+  }
+  
+  
+  label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    transition: background-color 0.2s ease;
+  }
+  
+  label:hover {
+    background-color: #f0f4fa;
   }

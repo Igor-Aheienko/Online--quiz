@@ -30,7 +30,8 @@
         font-weight: bold;
     }
 
-    .back-home-btn {
+    .back-home-btn,
+    .btn-animated {
         margin-top: 30px;
         display: inline-block;
         background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
@@ -39,13 +40,22 @@
         color: white;
         text-decoration: none;
         font-weight: bold;
-        transition: background 0.3s ease, transform 0.3s ease;
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(47, 128, 237, 0.7);
+        cursor: pointer;
     }
 
-    .back-home-btn:hover {
+    .back-home-btn:hover,
+    .btn-animated:hover {
         background: linear-gradient(135deg, #9face6 0%, #74ebd5 100%);
-        transform: translateY(2px);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(47, 128, 237, 0.9);
         text-decoration: none;
+    }
+
+    /* Відступ між кнопками */
+    .btn-animated {
+        margin-left: 20px;
     }
 </style>
 
@@ -61,6 +71,7 @@
         <p>Поки що немає питань для цього предмета.</p>
     {% endfor %}
 
-    <a href="{% url 'home' %}" class="back-home-btn">⬅️ На головну</a>
+    <a href="{% url 'home' %}" class="back-home-btn">⬅🏠 На головну</a>
+    <a href="{% url 'quiz_result' subject.id %}" class="btn-animated">📊 Перейти до результатів тесту</a>
 </div>
 {% endblock %}

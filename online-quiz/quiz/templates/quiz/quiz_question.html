@@ -135,9 +135,19 @@
     border-radius: 10px;
     margin-bottom: 20px;
     font-weight: 700;
-    display: none;
     font-size: 1rem;
     text-align: center;
+
+    /* Ось нові стилі для плавності */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: block;
+    pointer-events: none;
+  }
+
+  #answerWarning.visible {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   #warningModal {
@@ -245,15 +255,16 @@
         </div>
     </form>
 
-    <div id="warningModal">
-        <div>
-            <div>&#9888;</div>
+<div id="warningModal">
+        <div class="modal-content">
+            <div class="modal-icon">&#9888;</div>
             <p id="modalText">Текст попередження</p>
-            <button id="modalConfirm">Підтвердити</button>
-            <button id="modalCancel">Скасувати</button>
+            <div class="modal-buttons">
+                <button id="modalConfirm">Підтвердити</button>
+                <button id="modalCancel">Скасувати</button>
+            </div>
         </div>
     </div>
-</div>
 
 <script>
     let pendingAction = null;
@@ -286,17 +297,21 @@
     }
 
     function checkAnswerBeforeSubmit() {
-        const selected = document.querySelector('input[name="answer"]:checked');
-        if (!selected) {
-            const warning = document.getElementById('answerWarning');
-            warning.style.display = 'block';
-            setTimeout(() => {
-                warning.style.display = 'none';
-            }, 2500);
-            return false;
-        }
-        document.getElementById('quizForm').submit();
+    const selected = document.querySelector('input[name="answer"]:checked');
+    const warning = document.getElementById('answerWarning');
+
+    if (!selected) {
+        warning.classList.add('visible');
+
+        setTimeout(() => {
+            warning.classList.remove('visible');
+        }, 2500);
+
+        return false;
     }
+    document.getElementById('quizForm').submit();
+}
+        
 
     // Таймер
     let duration = 10 * 60;
