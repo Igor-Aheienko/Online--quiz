@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Question, Answer, Subject
+from .models import Quiz, Question, Answer, Subject
 from django.contrib.auth import login
 from .forms import SignUpForm
 from django.views.decorators.csrf import csrf_exempt
@@ -137,7 +137,7 @@ def quiz_question(request, subject_id, question_index):
 def quiz_result(request, subject_id):
     question_order = request.session.get('question_order', [])
     skipped_question_ids = request.session.get('skipped_questions', [])
-
+    subject = Subject.objects.get(id=subject_id)
     all_question_ids = list(set(question_order + skipped_question_ids))
     total = len(all_question_ids)
 
@@ -155,7 +155,8 @@ def quiz_result(request, subject_id):
         'skipped': len(skipped_question_ids),
         'skipped_questions': skipped_questions,
         'subject_id': subject_id,
-        'duration': duration,  
+        'duration': duration,
+        'quiz': subject,
     }
 
     if request.user.is_authenticated:
@@ -196,3 +197,15 @@ def review_answers(request, subject_id):
     return render(request, 'quiz/review_answers.html', {
         'questions_data': data
     })
+
+
+def correct_answers(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    questions = Question.objects.filter(subject=subject)
+
+    context = {
+        'subject': subject,
+        'questions': questions,
+    }
+
+    return render(request, 'quiz/correct_answers.html', context)

@@ -1,0 +1,15 @@
+{% extends 'quiz/base.html' %}
+{% block title %}Правильні відповіді{% endblock %}
+
+{% block content %}
+<h2>Правильні відповіді для "{{ quiz.title }}"</h2>
+<ul>
+    {% for question in questions %}
+        <li>
+            <strong>{{ question.text }}</strong><br>
+            Правильна відповідь: {{ question.correct_answer }}
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'home' %}">Повернутись</a>
+{% endblock %}

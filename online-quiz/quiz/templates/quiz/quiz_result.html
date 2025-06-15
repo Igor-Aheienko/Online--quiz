@@ -1,17 +1,14 @@
-{% if show_result %}
+{% extends 'quiz/base.html' %}
+
+{% block title %}Результати{% endblock %}
+
+{% block content %}
     <p>Пропущено питань: {{ skipped }} з {{ total }}</p>
     <p>Правильних відповідей: {{ score }} з {{ total }}</p>
-    <a href="{% url 'review_answers' subject_id %}">Переглянути правильні відповіді</a>
-{% else %}
-    <p>Щоб побачити результати — <a href="{% url 'login' %}">Увійдіть</a> або <a href="{% url 'singup' %}">Зареєструйтесь</a> </p>
-{% endif %}
-{% if duration %}
     <p>Час проходження: {{ duration }} секунд</p>
-{% endif %}
-
-<p>
-    <a href="{% url 'start_quiz' subject_id %}">Пройти ще раз</a>
-  </p>
-  <p>
-    <a href="{% url 'subject_list' %}">До списку предметів</a>
-  </p>
+    <div class="button-group">
+        <a class="fancy-button" href="{% url 'quiz_correct_answers' subject_id %}">Переглянути правильні відповіді</a>
+        <a class="fancy-button" href="{% url 'quiz' quiz.id %}">Пройти ще раз</a>
+        <a class="fancy-button" href="{% url 'home' %}">До списку предметів</a>
+    </div>
+{% endblock %}

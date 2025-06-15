@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Онлайн-Тест{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'quiz/css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1><a href="{% url 'home' %}">Онлайн-Тест</a></h1>
+        <nav>
+            {% if user.is_authenticated %}
+                <span>Вітаємо, {{ user.username }}</span> |
+                <a href="{% url 'logout' %}">Вийти</a>
+            {% else %}
+                <a href="{% url 'login' %}">Увійти</a> |
+                <a href="{% url 'singup' %}">Зареєструватися</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2025 Онлайн-Тест</p>
+    </footer>
+</body>
+</html>

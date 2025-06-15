@@ -18,5 +18,7 @@ urlpatterns = [
     path('quiz/<int:subject_id>/end/', views.end_quiz_early, name='end_quiz_early'),
     path('review/<int:subject_id>/', views.review_answers, name='review_answers'),
     path('profile/', views.profile_view, name='profile'),
-]
+    path('quiz/<int:subject_id>/answers/', views.correct_answers, name='quiz_correct_answers'),
+    path('quiz/<int:subject_id>/', views.quiz_question, name='quiz')
     
+]
