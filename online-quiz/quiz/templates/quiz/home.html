@@ -1,22 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Головна</title>
-</head>
-<body>
-    <h1>Обирай предмет, проходь тести та перевіряй свої знання!</h1>
+{% extends 'quiz/base.html' %}
+{% load static %}
 
-    {% if user.is_authenticated %}
-        <a href="{% url 'profile' %}">Профіль</a>
-        <p>Привіт, {{ user.username }}!</p>
-        <a href="{% url 'subject_list' %}">До предметів</a>
-        <br>
-        <form method="post" action="{% url 'logout' %}"><button type="submit">Вийти{% csrf_token %}</button></form>
-    {% else %}
-        <p>Ви не увійшли.</p>
-        <a href="{% url 'singup' %}">Зареєструватися</a><br>
-        <a href="{% url 'login' %}">Увійти</a><br>
-        <a href="{% url 'subject_list' %}">Пройти тестування</a><br>
-    {% endif %}
-</body>
-</html>
+{% block title %}Головна{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h2 class="home-title">Обирай предмет, проходь тести та перевіряй свої знання!</h2>
+
+    <div class="button-grid">
+        {% if user.is_authenticated %}
+            <p>Привіт, {{ user.username }}!</p>
+            <a href="{% url 'profile' %}" class="btn">👤 Профіль</a>
+            <a href="{% url 'subject_list' %}" class="btn">📚 До предметів</a>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="home-button">🚪 Вийти</button>
+            </form>
+        {% else %}
+            <a href="{% url 'singup' %}" class="home-button">📝 Зареєструватися</a>
+            <a href="{% url 'login' %}" class="home-button">🔑 Увійти</a>
+            <a href="{% url 'subject_list' %}" class="home-button">🧠 Пройти тестування</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -34,6 +34,7 @@ button, .btn {
 
 button:hover, .btn:hover {
     background: #0056b3;
+    text-decoration: none;
 }
 
 
@@ -62,3 +63,41 @@ button:hover, .btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
+
+
+.home-container {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.home-title {
+    font-size: 48px;
+    margin-bottom: 40px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.button-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.home-button {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+    padding: 16px 32px;
+    font-size: 18px;
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.home-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+}   
