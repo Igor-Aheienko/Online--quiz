@@ -3,12 +3,81 @@
 {% block title %}Результати{% endblock %}
 
 {% block content %}
-    <p>Пропущено питань: {{ skipped }} з {{ total }}</p>
-    <p>Правильних відповідей: {{ score }} з {{ total }}</p>
-    <p>Час проходження: {{ duration }} секунд</p>
+<style>
+  .result-container {
+    max-width: 600px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .result-container h2 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+
+  .result-container p {
+    font-size: 1.2rem;
+    margin: 12px 0;
+    color: #333;
+  }
+
+  .button-group {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .fancy-button {
+    display: inline-block;
+    padding: 14px 26px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
+
+  .fancy-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.03);
+  }
+
+  @media (max-width: 640px) {
+    .result-container {
+      margin: 40px 16px;
+      padding: 25px 20px;
+    }
+
+    .fancy-button {
+      font-size: 0.95rem;
+      padding: 12px 20px;
+    }
+  }
+</style>
+
+<div class="result-container">
+    <h2>Результати тесту</h2>
+    <p>Пропущено питань: <strong>{{ skipped }}</strong> з <strong>{{ total }}</strong></p>
+    <p>Правильних відповідей: <strong>{{ score }}</strong> з <strong>{{ total }}</strong></p>
+    <p>Час проходження: <strong>{{ duration }}</strong> секунд</p>
+
     <div class="button-group">
         <a class="fancy-button" href="{% url 'quiz_correct_answers' subject_id %}">Переглянути правильні відповіді</a>
         <a class="fancy-button" href="{% url 'quiz' quiz.id %}">Пройти ще раз</a>
         <a class="fancy-button" href="{% url 'home' %}">Повернутись на головну</a>
     </div>
+</div>
 {% endblock %}

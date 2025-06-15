@@ -4,16 +4,230 @@
 {% block title %}Питання{% endblock %}
 
 {% block content %}
+<style>
+  body {
+    background: #f4f7fb;
+    margin: 0;
+    padding: 0;
+  }
+
+  .question-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 25px 30px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .question-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+  }
+
+  #timer {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #007bff;
+    background: #e7f1ff;
+    padding: 8px 18px;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+    user-select: none;
+    margin-top: 10px;
+  }
+
+  .question-container p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: #333;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 14px;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    transition: background-color 0.2s ease;
+  }
+
+  label:hover {
+    background-color: #f0f4fa;
+  }
+
+  input[type="radio"] {
+    margin-right: 10px;
+    accent-color: #007bff;
+    cursor: pointer;
+    transform: scale(1.05);
+    vertical-align: middle;
+  }
+
+  .button-group {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+  }
+
+  .btn:not([data-action]) {
+    background-color: #007bff;
+    color: white;
+  }
+  .btn:not([data-action]):hover {
+    background-color: #0056b3;
+    transform: scale(1.03);
+  }
+
+  .btn[data-action="skip"] {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn[data-action="skip"]:hover {
+    background-color: #5a6268;
+    transform: scale(1.03);
+  }
+
+  .btn[data-action="end"] {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .btn[data-action="end"]:hover {
+    background-color: #b02a37;
+    transform: scale(1.03);
+  }
+
+  #answerWarning {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f5c2c7;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    display: none;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  #warningModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  #warningModal > div {
+    background: #fff;
+    padding: 28px 32px;
+    border-radius: 14px;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 7px 24px rgba(0,0,0,0.22);
+  }
+
+  #warningModal div > div:first-child {
+    font-size: 48px;
+    color: #f39c12;
+    margin-bottom: 18px;
+  }
+
+  #modalText {
+    font-weight: 700;
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  #modalConfirm, #modalCancel {
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+  }
+
+  #modalConfirm {
+    background: #28a745;
+    color: white;
+    margin-right: 14px;
+  }
+
+  #modalConfirm:hover {
+    background: #218838;
+  }
+
+  #modalCancel {
+    background: #6c757d;
+    color: white;
+  }
+
+  #modalCancel:hover {
+    background: #5a6268;
+  }
+
+  @media (max-width: 640px) {
+    .question-container {
+      margin: 30px 16px;
+      padding: 20px;
+    }
+
+    .question-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    #timer {
+      align-self: flex-end;
+    }
+  }
+</style>
+
 <div class="question-container">
-    <h2>Питання {{ question_index }} з {{ total }}</h2>
+    <div class="question-header">
+        <h2>Питання {{ question_index }} з {{ total }}</h2>
+        <div id="timer">10:00</div>
+    </div>
+
     <p>{{ question.text }}</p>
 
-    <!-- Попередження про не вибрану відповідь -->
-    <div id="answerWarning" style="display:none; color: #721c24; background-color: #f8d7da;
-         border: 1px solid #f5c6cb; padding: 10px 15px; border-radius: 8px;
-         margin-bottom: 15px; font-weight: bold; text-align: center;">
-        Ви не обрали відповідь!
-    </div>
+    <div id="answerWarning">Ви не обрали відповідь!</div>
 
     <form method="post" id="quizForm">
         {% csrf_token %}
@@ -21,7 +235,7 @@
             <label>
                 <input type="radio" name="answer" value="{{ answer.id }}">
                 {{ answer.text }}
-            </label><br>
+            </label>
         {% endfor %}
 
         <div class="button-group">
@@ -31,99 +245,86 @@
         </div>
     </form>
 
-    <!-- Таймер -->
-    <h2 style="margin-top: 30px;">Залишилось часу: <span id="timer">10:00</span></h2>
-
-    <!-- Модальне вікно підтвердження -->
-    <div id="warningModal" style="display:none; position:fixed; top:0; left:0;
-        width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000;">
-        <div style="background:#fff; padding:20px; border-radius:8px; max-width:320px; text-align:center; position: relative;">
-            <div style="font-size:40px; color:#f39c12; margin-bottom:15px;">&#9888;</div> <!-- Іконка попередження -->
-            <p id="modalText" style="font-weight:600; margin-bottom:20px;">Текст попередження</p>
-            <button id="modalConfirm" class="btn" style="background:#28a745; color:#fff; padding:8px 20px; border:none; border-radius:5px; font-weight:bold;">Підтвердити</button>
-            <button id="modalCancel" class="btn" style="background:#6c757d; color:#fff; padding:8px 20px; border:none; border-radius:5px; margin-left:10px;">Скасувати</button>
+    <div id="warningModal">
+        <div>
+            <div>&#9888;</div>
+            <p id="modalText">Текст попередження</p>
+            <button id="modalConfirm">Підтвердити</button>
+            <button id="modalCancel">Скасувати</button>
         </div>
     </div>
+</div>
 
-    <script>
-        let pendingAction = null;
+<script>
+    let pendingAction = null;
 
-        function showWarning(event, message) {
-            event.preventDefault();
-            pendingAction = event.target;  // Кнопка, яка викликала подію
-            document.getElementById('modalText').textContent = message;
-            document.getElementById('warningModal').style.display = 'flex';
+    function showWarning(event, message) {
+        event.preventDefault();
+        pendingAction = event.target;
+        document.getElementById('modalText').textContent = message;
+        document.getElementById('warningModal').style.display = 'flex';
+        return false;
+    }
+
+    document.getElementById('modalConfirm').onclick = function () {
+        const form = document.getElementById('quizForm');
+        const action = pendingAction.getAttribute('data-action');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = action;
+        input.value = '1';
+        form.appendChild(input);
+        form.submit();
+        closeModal();
+    };
+
+    document.getElementById('modalCancel').onclick = closeModal;
+
+    function closeModal() {
+        document.getElementById('warningModal').style.display = 'none';
+        pendingAction = null;
+    }
+
+    function checkAnswerBeforeSubmit() {
+        const selected = document.querySelector('input[name="answer"]:checked');
+        if (!selected) {
+            const warning = document.getElementById('answerWarning');
+            warning.style.display = 'block';
+            setTimeout(() => {
+                warning.style.display = 'none';
+            }, 2500);
             return false;
         }
+        document.getElementById('quizForm').submit();
+    }
 
-        document.getElementById('modalConfirm').onclick = function () {
-            // Додати hidden input з ім'ям відповідно до кнопки (skip або end)
-            const form = document.getElementById('quizForm');
-            const action = pendingAction.getAttribute('data-action');
+    // Таймер
+    let duration = 10 * 60;
+    let display = document.getElementById('timer');
 
-            // Видаляємо якщо є старі
-            const oldInput = form.querySelector('input[name="' + action + '"]');
-            if (oldInput) oldInput.remove();
+    function startTimer(seconds) {
+        let timer = seconds;
+        let minutes, secs;
 
-            // Додаємо новий прихований input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = action;
-            input.value = '1';
-            form.appendChild(input);
+        let countdown = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            secs = parseInt(timer % 60, 10);
 
-            form.submit();
-            closeModal();
-        };
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            secs = secs < 10 ? "0" + secs : secs;
 
-        document.getElementById('modalCancel').onclick = closeModal;
+            display.textContent = minutes + ":" + secs;
 
-        function closeModal() {
-            document.getElementById('warningModal').style.display = 'none';
-            pendingAction = null;
-        }
-
-        function checkAnswerBeforeSubmit() {
-            const selected = document.querySelector('input[name="answer"]:checked');
-            if (!selected) {
-                const warning = document.getElementById('answerWarning');
-                warning.style.display = 'block';
-                setTimeout(() => {
-                    warning.style.display = 'none';
-                }, 2500);
-                return false;
+            if (--timer < 0) {
+                clearInterval(countdown);
+                alert("Час вичерпано!");
+                window.location.href = "{% url 'quiz_result' subject_id %}";
             }
-            document.getElementById('quizForm').submit();
-        }
+        }, 1000);
+    }
 
-        // Таймер
-        let duration = 10 * 60;
-        let display = document.getElementById('timer');
-
-        function startTimer(seconds) {
-            let timer = seconds;
-            let minutes, secs;
-
-            let countdown = setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                secs = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                secs = secs < 10 ? "0" + secs : secs;
-
-                display.textContent = minutes + ":" + secs;
-
-                if (--timer < 0) {
-                    clearInterval(countdown);
-                    alert("Час вичерпано!");
-                    window.location.href = "{% url 'quiz_result' subject_id %}";
-                }
-            }, 1000);
-        }
-
-        window.onload = function () {
-            startTimer(duration);
-        };
-    </script>
-</div>
+    window.onload = function () {
+        startTimer(duration);
+    };
+</script>
 {% endblock %}

@@ -1,6 +1,90 @@
-<h2>Увійти</h2>
-<form method="post">
+{% extends 'quiz/base.html' %}
+{% load static %}
+
+{% block title %}Увійти{% endblock %}
+
+{% block content %}
+<style>
+  .form-container {
+    max-width: 400px;
+    margin: 80px auto 0;
+    padding: 30px 25px;
+    background: #f0f8ff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 123, 255, 0.15);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-container h2 {
+    text-align: center;
+    color: #0d6efd;
+    margin-bottom: 25px;
+    font-weight: 700;
+  }
+
+  form p {
+    margin-bottom: 15px;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="email"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #a8d0ff;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="text"]:focus,
+  input[type="password"]:focus,
+  input[type="email"]:focus {
+    border-color: #339af0;
+    outline: none;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    padding: 14px 0;
+    background: linear-gradient(135deg, #339af0 0%, #66b2ff 100%);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(51, 154, 240, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(51, 154, 240, 0.7);
+  }
+
+  .alt-link {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    color: #339af0;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .alt-link:hover {
+    color: #66b2ff;
+  }
+</style>
+
+<div class="form-container">
+  <h2>Увійти</h2>
+  <form method="post" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Увійти</button>
-</form>
+  </form>
+  <a href="{% url 'singup' %}" class="alt-link">Ще не маєте аккаунту? Зареєструйтесь</a>
+</div>
+{% endblock %}

@@ -3,20 +3,21 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Онлайн-Тест{% endblock %}</title>
+    <title>{% block title %}Онлайн-Тести{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'quiz/css/styles.css' %}">
 </head>
 <body>
     <header>
         <h1><a href="{% url 'home' %}">Онлайн-Тест</a></h1>
         <nav>
-            {% if user.is_authenticated %}
-                <span>Вітаємо, {{ user.username }}</span> |
-                <a href="{% url 'logout' %}">Вийти</a>
-            {% else %}
-                <a href="{% url 'login' %}">Увійти</a> |
-                <a href="{% url 'singup' %}">Зареєструватися</a>
-            {% endif %}
+            {% block nav %}
+                {% if user.is_authenticated %}
+                    <span>Вітаємо, {{ user.username }}</span> 
+                {% else %}
+                    <a href="{% url 'login' %}">Увійти</a> |
+                    <a href="{% url 'singup' %}">Зареєструватися</a>
+                {% endif %}
+            {% endblock %}
         </nav>
     </header>
 
@@ -25,7 +26,11 @@
     </main>
 
     <footer>
-        <p>© 2025 Онлайн-Тест</p>
+        {% block footer %}
+            <p style="text-align: center; color: #555; padding: 10px 0; font-size: 14px; background: #f0f0f0;">
+                © 2025 Онлайн-Тест
+            </p>
+        {% endblock %}
     </footer>
 </body>
 </html>

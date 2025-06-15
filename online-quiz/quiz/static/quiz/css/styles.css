@@ -120,7 +120,6 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
     font-size: 18px;
 }
 
-
 .profile-button {
     display: inline-block;
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -135,11 +134,10 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
 }
 
 .profile-button:hover {
-    transform: translateY(3px); /* підпригування вниз */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(4px); /* Підпригування вниз */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     text-decoration: none;
 }
-
 .question-box {
     background-color: #fefefe;
     border: 2px solid #ddd;
@@ -164,38 +162,6 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
     margin-right: 10px;
 }
 
-button, .btn, .home-button, .fancy-button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    user-select: none;
-    outline: none;
-    text-decoration: none;
-    transform: translateY(0);
-    will-change: transform;
-    backface-visibility: hidden;
-    /* fix for iOS Safari lag */
-    -webkit-font-smoothing: antialiased;
-}
-
-button:hover, .btn:hover, .home-button:hover, .fancy-button:hover {
-    background-color: #0056b3;
-    transform: translateY(-5px);
-    text-decoration: none;
-}
-
-button:focus, .btn:focus, .home-button:focus, .fancy-button:focus {
-    outline: none;
-}
-
-button:active, .btn:active, .home-button:active, .fancy-button:active {
-    transform: translateY(-2px);
-    transition-duration: 0.1s;
-}
 
 .modal {
     display: none;
@@ -222,3 +188,35 @@ button:active, .btn:active, .home-button:active, .fancy-button:active {
     justify-content: space-around;
     margin-top: 20px;
 }
+
+
+
+  html, body {
+    height: 100%;
+    margin: 0; padding: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main {
+    flex: 1;
+    padding: 20px;
+  }
+
+  footer {
+    background: #f0f0f0;
+    padding: 10px 0;
+    text-align: center;
+    color: #555;
+    font-size: 14px;
+  }
+
+  .-question-container {
+    padding-bottom: 80px; /* простір під футером */
+    min-height: calc(100vh - 100px); /* мінімальна висота, щоб футер був внизу */
+    box-sizing: border-box;
+  }

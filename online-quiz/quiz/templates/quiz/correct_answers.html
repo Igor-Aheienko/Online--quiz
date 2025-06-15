@@ -1,15 +1,66 @@
 {% extends 'quiz/base.html' %}
+{% load static %}
+
 {% block title %}Правильні відповіді{% endblock %}
 
 {% block content %}
-<h2>Правильні відповіді для "{{ quiz.title }}"</h2>
-<ul>
+<style>
+    .correct-answers-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .correct-answer-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .correct-answer-card strong {
+        font-size: 16px;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .correct-answer-text {
+        color: #2ecc71;
+        font-weight: bold;
+    }
+
+    .back-home-btn {
+        margin-top: 30px;
+        display: inline-block;
+        background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .back-home-btn:hover {
+        background: linear-gradient(135deg, #9face6 0%, #74ebd5 100%);
+        transform: translateY(2px);
+        text-decoration: none;
+    }
+</style>
+
+<div class="correct-answers-container">
+    <h2>Правильні відповіді</h2>
+
     {% for question in questions %}
-        <li>
-            <strong>{{ question.text }}</strong><br>
-            Правильна відповідь: {{ question.correct_answer }}
-        </li>
+        <div class="correct-answer-card">
+            <strong>{{ question.text }}</strong>
+            ✅ Правильна відповідь: <span class="correct-answer-text">{{ question.correct_answer }}</span>
+        </div>
+    {% empty %}
+        <p>Поки що немає питань для цього предмета.</p>
     {% endfor %}
-</ul>
-<a href="{% url 'home' %}">Повернутись на головну</a>
+
+    <a href="{% url 'home' %}" class="back-home-btn">⬅️ На головну</a>
+</div>
 {% endblock %}

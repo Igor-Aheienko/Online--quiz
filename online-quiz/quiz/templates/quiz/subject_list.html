@@ -4,15 +4,87 @@
 {% block title %}Список предметів{% endblock %}
 
 {% block content %}
-<div class="home-container">
-    <h2 class="home-title">Оберіть предмет для проходження тесту:</h2>
+<style>
+    .subject-page {
+        text-align: center;
+        padding-top: 60px;
+        min-height: 75vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
 
-    <div class="button-grid">
+    .subject-title {
+        font-size: 36px;
+        color: #2c3e50;
+        margin-bottom: 40px;
+        font-weight: bold;
+    }
+
+    .subject-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        max-width: 800px;
+        width: 100%;
+    }
+
+    .subject-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 14px 28px;
+        font-size: 18px;
+        border-radius: 12px;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        user-select: none;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .subject-button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 16px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #5a6eea 0%, #6339a1 100%);
+        text-decoration: none;
+    }
+
+    .no-subjects {
+        font-size: 20px;
+        color: #777;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="subject-page">
+    <h2 class="subject-title">Оберіть предмет для проходження тесту:</h2>
+
+    <div class="subject-grid">
         {% for subject in subjects %}
-            <a class="btn" href="{% url 'start_quiz' subject.id %}">{{ subject.name }}</a>
+            <a class="subject-button" href="{% url 'start_quiz' subject.id %}">{{ subject.name }}</a>
         {% empty %}
-            <p>Немає доступних предметів.</p>
+            <p class="no-subjects">Немає доступних предметів.</p>
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block footer %}
+<style>
+    footer p {
+        text-align: center;
+        color: #555;
+        font-size: 14px;
+        padding: 12px 0;
+        background-color: #f0f0f0;
+        margin: 0;
+        user-select: none;
+    }
+</style>
+<footer>
+    <p>© 2025 Онлайн-Тести</p>
+</footer>
 {% endblock %}
