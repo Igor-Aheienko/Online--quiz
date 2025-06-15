@@ -1,27 +1,100 @@
-<h2>Питання {{ question_index }} із {{ total }}</h2>
-<p>{{ question.text }}</p>
+{% extends 'quiz/base.html' %}
+{% load static %}
 
-<form method="post">
-  {% csrf_token %}
-  {% for answer in answers %}
-      <label>
-          <input type="radio" name="answer" value="{{ answer.id }}">
-          {{ answer.text }}
-      </label><br>
-  {% endfor %}
+{% block title %}Питання{% endblock %}
 
-  <button type="submit">Відповісти</button>
-  <button type="submit" name="skip" value="1"
-          onclick="return confirm('Пропустити це питання? Ви зможете повернутись до нього пізніше.')">
-      Пропустити
-  </button>
-</form>
+{% block content %}
+<div class="question-container">
+    <h2>Питання {{ question_index }} із {{ total }}</h2>
+    <p>{{ question.text }}</p>
 
+    <form method="post" id="quizForm">
+        {% csrf_token %}
+        {% for answer in answers %}
+            <label>
+                <input type="radio" name="answer" value="{{ answer.id }}">
+                {{ answer.text }}
+            </label><br>
+        {% endfor %}
 
-<h2>Залишилось часу: <span id="timer">10:00</span></h2>
+        <div class="button-group">
+            <button type="button" class="btn" onclick="showSkipWarning()">Пропустити</button>
+            <button type="button" class="btn" onclick="showFinishWarning()">Завершити тест</button>
+            <button type="button" class="btn" onclick="handleSubmit()">Відповісти</button>
+        </div>
+    </form>
+
+    <!-- Таймер -->
+    <h3>Залишилось часу: <span id="timer">10:00</span></h3>
+
+    <!-- Модальне вікно -->
+    <div id="warningModal" style="display:none; position:fixed; top:0; left:0;
+        width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+        <div style="background:#fff; padding:20px; border-radius:8px; max-width:300px; text-align:center;">
+            <p id="modalText">Текст попередження</p>
+            <button id="modalConfirm" class="btn">Підтвердити</button>
+            <button onclick="closeModal();" class="btn" style="background:#6c757d; margin-left:10px;">Скасувати</button>
+        </div>
+    </div>
+</div>
 
 <script>
-    let duration = 10 * 60; 
+    let pendingInputName = null;
+
+    function showSkipWarning() {
+        document.getElementById('modalText').textContent = 'Пропустити це питання?';
+        pendingInputName = 'skip';
+        openModal();
+    }
+
+    function showFinishWarning() {
+        document.getElementById('modalText').textContent = 'Завершити тест?';
+        pendingInputName = 'end';
+        openModal();
+    }
+
+    function openModal() {
+        document.getElementById('warningModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('warningModal').style.display = 'none';
+        pendingInputName = null;
+    }
+
+    document.getElementById('modalConfirm').onclick = function () {
+        const form = document.getElementById('quizForm');
+        if (pendingInputName) {
+            const existing = form.querySelector(`input[name="${pendingInputName}"]`);
+            if (existing) existing.remove();
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = pendingInputName;
+            input.value = '1';
+            form.appendChild(input);
+        }
+        form.submit();
+    };
+
+    window.onclick = function (event) {
+        const modal = document.getElementById('warningModal');
+        if (event.target === modal) closeModal();
+    };
+
+    // Перевірка перед "Відповісти"
+    function handleSubmit() {
+        const form = document.getElementById('quizForm');
+        const selected = form.querySelector('input[name="answer"]:checked');
+        if (!selected) {
+            alert('⚠️ Ви не вибрали відповідь!');
+            return;
+        }
+        form.submit();
+    }
+
+    // Таймер
+    let duration = 10 * 60;
     let display = document.getElementById('timer');
 
     function startTimer(seconds) {
@@ -49,10 +122,4 @@
         startTimer(duration);
     };
 </script>
-
-<form action="{% url 'end_quiz_early' subject_id %}" method="post" style="margin-top: 20px;">
-  {% csrf_token %}
-  <button type="submit" onclick="return confirm('Тест буде завершено. Ви отримаєте бали за вже пройдені питання. Продовжити?');">
-      Завершити тест
-  </button>
-</form>
+{% endblock %}

@@ -100,6 +100,7 @@ def quiz_question(request, subject_id, question_index):
     question_ids = request.session.get('question_order', [])
     skipped = request.session.get('skipped_questions', [])
 
+    # Коли питання закінчились
     if question_index >= len(question_ids):
         if skipped:
             request.session['question_order'] = skipped
@@ -113,10 +114,17 @@ def quiz_question(request, subject_id, question_index):
     answers = question.answers.all()
 
     if request.method == 'POST':
-        if 'skip' in request.POST:
+        # ✅ Якщо користувач натиснув "Завершити тест"
+        if 'end' in request.POST:
+            return redirect('quiz_result', subject_id=subject_id)
+
+        # ✅ Якщо натиснув "Пропустити"
+        elif 'skip' in request.POST:
             skipped.append(question.id)
             request.session['skipped_questions'] = skipped
-        else:
+
+        # ✅ Якщо вибрав відповідь
+        elif 'answer' in request.POST:
             selected_answer_id = int(request.POST.get('answer'))
             selected_answer = get_object_or_404(Answer, id=selected_answer_id)
 
