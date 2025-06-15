@@ -14,6 +14,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     tests_taken = models.PositiveIntegerField(default=0)
     total_score = models.PositiveIntegerField(default=0)
+    total_time_spent = models.PositiveIntegerField(default=0)
 
     def average_score(self):
         if self.tests_taken == 0:

@@ -11,6 +11,14 @@
         <p><strong>Кількість пройдених тестів:</strong> {{ profile.tests_taken }}</p>
         <p><strong>Загальний бал:</strong> {{ profile.total_score }}</p>
         <p><strong>Середній бал:</strong> {{ profile.average_score|default:"--" }}</p>
+        <p><strong>Загальний час у тестах:</strong>
+            {% if profile.total_time_spent %}
+                {{ total_hours }} год {{ total_minutes }} хв {{ total_seconds }} сек
+            {% else %}
+                0 сек
+            {% endif %}
+        </p>
+</p>
     </div>
 
     <div class="button-grid">
