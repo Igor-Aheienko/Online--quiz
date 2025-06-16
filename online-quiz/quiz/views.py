@@ -1,11 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Quiz, Question, Answer, Subject
+from .models import Quiz, Question, Answer, Subject, TestResult
 from django.contrib.auth import login
 from .forms import SignUpForm
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 import random
 import time
+
+@login_required
+def history_view(request):
+    results = request.user.test_results.order_by('-date_taken')
+    return render(request, 'quiz/history.html', {'results': results})
 
 @csrf_exempt
 def end_quiz_early(request, subject_id):
@@ -70,22 +76,44 @@ from django.shortcuts import render
 @login_required
 def profile_view(request):
     profile = request.user.userprofile
-    average_score = round(profile.total_score / profile.tests_taken, 2) if profile.tests_taken > 0 else 0
+    test_results = TestResult.objects.filter(user=request.user).order_by('-date_taken')
 
-    total_seconds = profile.total_time_spent or 0
-    hours = total_seconds // 3600
-    minutes = (total_seconds % 3600) // 60
-    seconds = total_seconds % 60
+    # Додаємо хвилини і секунди до кожного результату для зручності в шаблоні
+    for result in test_results:
+        result.minutes = result.duration // 60
+        result.seconds = result.duration % 60
 
-    return render(request, 'quiz/profile.html', {
+    # Обчислення загального часу
+    total_time = sum(result.duration for result in test_results)
+    total_hours = total_time // 3600
+    total_minutes = (total_time % 3600) // 60
+
+    # Середній час на тест
+    tests_count = profile.tests_taken if profile.tests_taken > 0 else 1
+    avg_time = total_time // tests_count
+    avg_hours = avg_time // 3600
+    avg_minutes = (avg_time % 3600) // 60
+    avg_seconds = avg_time % 60
+
+    # Середній бал
+    average_score = profile.total_score / tests_count if profile.tests_taken > 0 else 0
+
+    context = {
         'profile': profile,
-        'average_score': average_score,
-        'total_hours': hours,
-        'total_minutes': minutes,
-        'total_seconds': seconds,
-    })
+        'test_results': test_results,
+        'total_hours': total_hours,
+        'total_minutes': total_minutes,
+        'average_score': round(average_score, 2),
+        'avg_hours': avg_hours,
+        'avg_minutes': avg_minutes,
+        'avg_seconds': avg_seconds,
+    }
+    return render(request, 'quiz/profile.html', context)
 
 def start_quiz(request, subject_id):
+    if 'start_time' not in request.session:
+        request.session['start_time'] = time.time()
+
     subject = get_object_or_404(Subject, id=subject_id)
     
     question_ids = list(Question.objects.filter(subject=subject).values_list('id', flat=True))
@@ -99,14 +127,17 @@ def start_quiz(request, subject_id):
     request.session['question_index'] = 0
     request.session['skipped_questions'] = []
     request.session['initial_question_order'] = question_ids
-    request.session['start_time'] = time.time()
     request.session.pop('result_saved', None)
     
-
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
 
-
 def quiz_question(request, subject_id, question_index):
+    start_time = request.session.get('start_time')
+    if start_time:
+        elapsed = time.time() - start_time
+        if elapsed > 600:  # 10 хвилин = 600 секунд
+            return redirect('quiz_result', subject_id=subject_id)
+
     question_ids = request.session.get('question_order', [])
     skipped = request.session.get('skipped_questions', [])
 
@@ -123,7 +154,6 @@ def quiz_question(request, subject_id, question_index):
     answers = question.answers.all()
 
     if request.method == 'POST':
-        # Ініціалізація score, якщо немає
         if 'score' not in request.session:
             request.session['score'] = 0
 
@@ -143,7 +173,7 @@ def quiz_question(request, subject_id, question_index):
                     if selected_answer.is_correct:
                         request.session['score'] += 1
                 except ValueError:
-                    pass  # Некоректний id відповіді, можна ігнорувати
+                    pass
 
         return redirect('quiz_question', subject_id=subject_id, question_index=question_index + 1)
 
@@ -155,11 +185,6 @@ def quiz_question(request, subject_id, question_index):
         'subject_id': subject_id,
     })
 
-
-import time
-from django.shortcuts import render
-from .models import Subject, Question
-
 def quiz_result(request, subject_id):
     question_order = request.session.get('question_order', [])
     skipped_question_ids = request.session.get('skipped_questions', [])
@@ -169,14 +194,12 @@ def quiz_result(request, subject_id):
 
     skipped_questions = Question.objects.filter(id__in=skipped_question_ids)
 
-    # Розрахунок часу проходження
     start_time = request.session.get('start_time')
     if start_time:
         duration = int(time.time() - start_time)
     else:
         duration = 0
 
-   
     score = request.session.get('score', 0)
 
     context = {
@@ -190,34 +213,28 @@ def quiz_result(request, subject_id):
         'show_result': True,
     }
 
-    
     if request.user.is_authenticated and not request.session.get('result_saved'):
+        # Оновлюємо профіль
         profile = request.user.userprofile
         profile.tests_taken += 1
         profile.total_score += score
-        profile.total_time_spent += duration  
+        profile.total_time_spent += duration
         profile.save()
+
+        # Зберігаємо в історію тільки для залогінених
+        TestResult.objects.create(
+            user=request.user,
+            subject=subject,
+            score=score,
+            total_questions=total,
+            skipped_questions=len(skipped_question_ids),
+            duration=duration,
+            # date_taken – не треба, auto_now_add=True в моделі це зробить
+        )
+
         request.session['result_saved'] = True
 
     return render(request, 'quiz/quiz_result.html', context)
-
-
-def review_answers(request, subject_id):
-    question_ids = request.session.get('initial_question_order', [])
-    questions = Question.objects.filter(id__in=question_ids)
-
-    data = []
-    for question in questions:
-        correct = question.answers.filter(is_correct=True)
-        data.append({
-            'question': question,
-            'correct_answers': correct
-        })
-
-    return render(request, 'quiz/review_answers.html', {
-        'questions_data': data
-    })
-
 
 def correct_answers(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
@@ -237,3 +254,20 @@ def correct_answers(request, subject_id):
     }
 
     return render(request, 'quiz/correct_answers.html', context)
+
+
+def review_answers(request, subject_id):
+    question_ids = request.session.get('initial_question_order', [])
+    questions = Question.objects.filter(id__in=question_ids)
+
+    data = []
+    for question in questions:
+        correct = question.answers.filter(is_correct=True)
+        data.append({
+            'question': question,
+            'correct_answers': correct
+        })
+
+    return render(request, 'quiz/review_answers.html', {
+        'questions_data': data
+    })

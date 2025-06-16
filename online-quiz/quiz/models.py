@@ -20,8 +20,7 @@ class UserProfile(models.Model):
         if self.tests_taken == 0:
             return 0
         return round(self.total_score / self.tests_taken, 2)
-
-
+    
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -35,6 +34,18 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
+    
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='test_results')
+    subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True)
+    score = models.PositiveIntegerField()
+    total_questions = models.PositiveIntegerField()
+    skipped_questions = models.PositiveIntegerField(default=0)
+    duration = models.PositiveIntegerField(help_text='Час проходження у секундах')
+    date_taken = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} — {self.subject.name} — {self.score}/{self.total_questions} ({self.date_taken.date()})'
 
 class Question(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)

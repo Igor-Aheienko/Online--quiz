@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.views import LogoutView
+from .views import history_view
 
 urlpatterns = [
     path('', views.home, name='home'),  
@@ -19,6 +20,7 @@ urlpatterns = [
     path('review/<int:subject_id>/', views.review_answers, name='review_answers'),
     path('profile/', views.profile_view, name='profile'),
     path('quiz/<int:subject_id>/answers/', views.correct_answers, name='quiz_correct_answers'),
-    path('quiz/<int:subject_id>/', views.quiz_question, name='quiz')
+    path('quiz/<int:subject_id>/', views.quiz_question, name='quiz'),
+    path('profile/history/', history_view, name='profile_history'),
     
 ]
