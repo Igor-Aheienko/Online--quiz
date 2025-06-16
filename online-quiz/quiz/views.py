@@ -135,7 +135,7 @@ def quiz_question(request, subject_id, question_index):
     start_time = request.session.get('start_time')
     if start_time:
         elapsed = time.time() - start_time
-        if elapsed > 600:  # 10 хвилин = 600 секунд
+        if elapsed > 300: 
             return redirect('quiz_result', subject_id=subject_id)
 
     question_ids = request.session.get('question_order', [])
@@ -183,7 +183,7 @@ def quiz_question(request, subject_id, question_index):
         'question_index': question_index + 1,
         'total': len(question_ids),
         'subject_id': subject_id,
-    })
+    }) 
 
 def quiz_result(request, subject_id):
     question_order = request.session.get('question_order', [])
