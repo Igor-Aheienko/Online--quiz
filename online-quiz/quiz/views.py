@@ -127,6 +127,10 @@ def start_quiz(request, subject_id):
     request.session['question_index'] = 0
     request.session['skipped_questions'] = []
     request.session['initial_question_order'] = question_ids
+    
+
+    request.session["start_time"] = time.time()
+
     request.session.pop('result_saved', None)
     
     return redirect('quiz_question', subject_id=subject.id, question_index=0)
@@ -271,3 +275,5 @@ def review_answers(request, subject_id):
     return render(request, 'quiz/review_answers.html', {
         'questions_data': data
     })
+
+    
