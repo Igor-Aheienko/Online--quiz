@@ -65,7 +65,7 @@ def singup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('question_list')
+            return redirect('home')
     else:
         form = SignUpForm()
     return render(request, 'quiz/singup.html', {'form': form})
