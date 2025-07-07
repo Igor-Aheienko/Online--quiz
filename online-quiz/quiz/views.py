@@ -199,10 +199,13 @@ def quiz_result(request, subject_id):
     skipped_questions = Question.objects.filter(id__in=skipped_question_ids)
 
     start_time = request.session.get('start_time')
-    if start_time:
-        duration = int(time.time() - start_time)
-    else:
-        duration = 0
+    
+    # ✅ Додаємо фіксацію end_time один раз
+    if 'end_time' not in request.session:
+        request.session['end_time'] = time.time()
+
+    end_time = request.session.get('end_time')
+    duration = int(end_time - start_time) if start_time and end_time else 0
 
     score = request.session.get('score', 0)
 
@@ -218,14 +221,12 @@ def quiz_result(request, subject_id):
     }
 
     if request.user.is_authenticated and not request.session.get('result_saved'):
-        # Оновлюємо профіль
         profile = request.user.userprofile
         profile.tests_taken += 1
         profile.total_score += score
         profile.total_time_spent += duration
         profile.save()
 
-        # Зберігаємо в історію тільки для залогінених
         TestResult.objects.create(
             user=request.user,
             subject=subject,
@@ -233,7 +234,6 @@ def quiz_result(request, subject_id):
             total_questions=total,
             skipped_questions=len(skipped_question_ids),
             duration=duration,
-            # date_taken – не треба, auto_now_add=True в моделі це зробить
         )
 
         request.session['result_saved'] = True
