@@ -199,13 +199,15 @@ def quiz_result(request, subject_id):
     skipped_questions = Question.objects.filter(id__in=skipped_question_ids)
 
     start_time = request.session.get('start_time')
-    
-    # ✅ Додаємо фіксацію end_time один раз
+
+    # ✅ Зберігаємо end_time один раз
     if 'end_time' not in request.session:
         request.session['end_time'] = time.time()
 
     end_time = request.session.get('end_time')
     duration = int(end_time - start_time) if start_time and end_time else 0
+    if duration < 0:
+        duration = 0  # 🔒 Захист від негативного значення
 
     score = request.session.get('score', 0)
 
@@ -224,7 +226,11 @@ def quiz_result(request, subject_id):
         profile = request.user.userprofile
         profile.tests_taken += 1
         profile.total_score += score
-        profile.total_time_spent += duration
+
+        # ✅ Додаємо захист і тут:
+        if duration > 0:
+            profile.total_time_spent += duration
+
         profile.save()
 
         TestResult.objects.create(
@@ -239,25 +245,6 @@ def quiz_result(request, subject_id):
         request.session['result_saved'] = True
 
     return render(request, 'quiz/quiz_result.html', context)
-
-def correct_answers(request, subject_id):
-    subject = get_object_or_404(Subject, id=subject_id)
-    questions = Question.objects.filter(subject=subject).prefetch_related('answers')
-
-    questions_with_answers = []
-    for q in questions:
-        correct = q.answers.filter(is_correct=True).first()
-        questions_with_answers.append({
-            'text': q.text,
-            'correct_answer': correct.text if correct else "Немає правильної відповіді"
-        })
-
-    context = {
-        'subject': subject,
-        'questions': questions_with_answers,
-    }
-
-    return render(request, 'quiz/correct_answers.html', context)
 
 
 def review_answers(request, subject_id):
