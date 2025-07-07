@@ -263,4 +263,21 @@ def review_answers(request, subject_id):
         'questions_data': data
     })
 
-    
+def correct_answers(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    questions = Question.objects.filter(subject=subject).prefetch_related('answers')
+
+    questions_with_answers = []
+    for q in questions:
+        correct = q.answers.filter(is_correct=True).first()
+        questions_with_answers.append({
+            'text': q.text,
+            'correct_answer': correct.text if correct else "Немає правильної відповіді"
+        })
+
+    context = {
+        'subject': subject,
+        'questions': questions_with_answers,
+    }
+
+    return render(request, 'quiz/correct_answers.html', context)
