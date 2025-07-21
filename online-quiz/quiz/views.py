@@ -200,14 +200,14 @@ def quiz_result(request, subject_id):
 
     start_time = request.session.get('start_time')
 
-    # ✅ Зберігаємо end_time один раз
+    # ✅ Якщо час ще не збережений (наприклад, якщо натиснута "Завершити" кнопка веде сюди напряму)
     if 'end_time' not in request.session:
         request.session['end_time'] = time.time()
 
     end_time = request.session.get('end_time')
     duration = int(end_time - start_time) if start_time and end_time else 0
     if duration < 0:
-        duration = 0  # 🔒 Захист від негативного значення
+        duration = 0  # Захист від мінусових значень
 
     score = request.session.get('score', 0)
 
@@ -227,7 +227,6 @@ def quiz_result(request, subject_id):
         profile.tests_taken += 1
         profile.total_score += score
 
-        # ✅ Додаємо захист і тут:
         if duration > 0:
             profile.total_time_spent += duration
 
@@ -245,7 +244,6 @@ def quiz_result(request, subject_id):
         request.session['result_saved'] = True
 
     return render(request, 'quiz/quiz_result.html', context)
-
 
 def review_answers(request, subject_id):
     question_ids = request.session.get('initial_question_order', [])
